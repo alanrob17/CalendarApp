@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 using _ed = Calendar.Data.EventData;
+using _fd = Calendar.Data.FormatData;
 
 namespace Calendar
 {
@@ -10,7 +11,7 @@ namespace Calendar
     {
         public static void Main(string[] args)
         {
-            var fileName = "AlanCalendar.json";
+            var fileName = "DavidCalendar.json";
 
             string jsonFile = fileName;
 
@@ -30,10 +31,12 @@ namespace Calendar
 
             List<ShortEventModel> list = _ed.CreateSelectedEventsList(events, startDate, endDate);
 
-            foreach (var ev in list)
-            {
-                Console.WriteLine($"{ev.EventId}: {ev.Name}\n\n\t{ev.Description}\n\t{ev.StartDate}\n\t{ev.EndDate}\n\t{ev.Location}\n\t{ev.HtmlLink}\n\n");
-            }
+            _fd.CreateHtmlFile(list);
+            
+            //foreach (var ev in list)
+            //{
+            //    Console.WriteLine($"{ev.EventId}: {ev.Name}\n\n\t{ev.Description}\n\t{ev.StartDate}\n\t{ev.EndDate}\n\t{ev.Location}\n\t{ev.HtmlLink}\n\n");
+            //}
 
             Console.WriteLine("Finished...");
         }

@@ -97,6 +97,16 @@ namespace Calendar.Data
                 // Check if the date is within the range
                 if (DateTime.Compare(item.Start.DateTime, startDate) >= 0 && DateTime.Compare(item.Start.DateTime, endDate) <= 0)
                 {
+                    if (item.Start.TimeZone == "NONE")
+                    {
+                        item.Start.DateTime = item.Start.DateTime.Date;
+                    }
+
+                    if (item.End.TimeZone == "NONE")
+                    {
+                        item.End.DateTime = item.End.DateTime.Date;
+                    }
+
                     ShortEventModel newEvent = new ShortEventModel(++eventId, item.Summary, item.Location, item.Start.DateTime, item.End.DateTime, item.Description, item.HtmlLink);
                     selectedEvents.Add(newEvent);
                 }
@@ -111,7 +121,7 @@ namespace Calendar.Data
             day = day.Replace("\"", string.Empty);
             day = day.Trim();
             // 
-            day = $"\t\"dateTime\": \"{day}T12:00:00+11:00\",";
+            day = $"\t\"dateTime\": \"{day}T12:00:00+00:00\",";
 
             return day;
         }
