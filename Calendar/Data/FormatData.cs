@@ -4,9 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using _rs = Calendar.Properties.Resources;
 
 namespace Calendar.Data
 {
+    // TODO: description has line breaks - replace these with Paragraph breaks.
+    // TODO: Work out the first time we change from one month to the next. Put a position value on that event e.g. #august. Use for positioning
+    // TODO: If the StartDate and endDate are the same then don't diplay the endDate. This also works of only 1 day difference.
     internal class FormatData
     {
         public static List<string> Content = new();
@@ -23,22 +28,25 @@ namespace Calendar.Data
 
         private static void ReformatEventsToHtml(List<ShortEventModel> list)
         {
-            FormatHeader();
+            var header = _rs.AlanHeader;
+            // var header = _rs.DavidHeader;
+
+            int monthStamp = 0;
+
+            FormatHeader(header);
 
             foreach (var item in list)
             {
-                FormatEventName(item.Name);
+                if(item.StartDate.Month > monthStamp)
+                {
+                    monthStamp = item.StartDate.Month;
 
-                FormatDescription(item.Description);
+                    BuildMonthDiv(item.StartDate);
 
-                FormatStartDate(item.StartDate);
+            
+                }
 
-                FormatEndDate(item.EndDate);
-
-                FormatLocation(item.Location);
-
-                FormatHtmlLink(item.HtmlLink);
-                FormatDivider();
+                BuildCard(item);
             }
 
             FormatFooter();
@@ -47,93 +55,72 @@ namespace Calendar.Data
             File.WriteAllLines(Environment.CurrentDirectory + "\\" + newFile, Content, Encoding.UTF8);
         }
 
-        private static void FormatEventName(string name)
+        private static void BuildMonthDiv(DateTime monthStamp)
         {
-            string line = $"<div class=\"event-name\">\n<h2>{name}</h2>\n</div>";
-            Content.Add(line);
+            string month = monthStamp.ToString("MMMM");
+            Content.Add("<div class=\"row mt-3\">");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("<div class=\"col-sm-8\">");
+            Content.Add($"<div><span><a href=\"#{month.ToLower()}\" id=\"{month.ToLower()}-link\"></a></span><br/><br/><br/><h1 class=\"dark-blue\">{month}</h1></div>");
+            Content.Add("</div>");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("</div>");
         }
 
-        private static void FormatHtmlLink(string htmlLink)
+        private static void BuildCard(ShortEventModel item)
         {
-            var link = $"<p><strong>link:</strong> <a href=\"{htmlLink}\">Link to calendar event.</a></p>\n";
-            Content.Add(link);
+            var description = string.Empty;
+
+            if (description != null && description.Contains("\n"))
+            {
+                description = item.Description.Replace("\n", "<br/>");
+            }
+            
+            Content.Add("<div class=\"row mt-3\">");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("<div class=\"col-sm-8\">");
+            Content.Add("<div class=\"card\">");
+            Content.Add("<div class=\"card-body\">");
+            Content.Add($"<h2 class=\"card-title\">{item.Name}</h2>");
+            Content.Add("<div class=\"description\">");
+            Content.Add($"<p class=\"card-text\"><strong>Description:</strong><br/>{description}</p>");
+            Content.Add("</div>");
+            Content.Add($"<p class=\"card-text\"><strong>Start date:</strong> {item.StartDate}</p>");
+            Content.Add($"<p class=\"card-text\"><strong>End date:</strong> {item.EndDate}</p>");
+            Content.Add($"<p class=\"card-text\"><strong>Location:</strong><br/>{item.Location}</p>");
+            Content.Add($"<p class=\"card-text\"><strong>link:</strong><br/><a href=\"{item.HtmlLink}\">Calendar event.</a></p>");
+            Content.Add("</div>");
+            Content.Add("</div>");
+            Content.Add("</div>");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("</div>");
         }
 
-        private static void FormatLocation(string location)
+        private static void FormatHeader(string header)
         {
-            var day = $"<p><strong>Location:</strong> {location}</p>\n";
-            Content.Add(day);
-        }
-
-        private static void FormatEndDate(DateTime endDate)
-        {
-            var day = $"<p><strong>End date:</strong> {endDate}</p>\n";
-            Content.Add(day);
-        }
-
-        private static void FormatStartDate(DateTime startDate)
-        {
-            var day = $"<p><strong>Start date:</strong> {startDate}</p>\n";
-            Content.Add(day);
-        }
-
-        private static void FormatDescription(string description)
-        {
-            var divStart = "<div=\"description\">\n";
-            Content.Add(divStart);
-            var label = "<p><strong>Description: </strong></p>\n";
-            Content.Add(label);
-
-            var desc = $"<p>{description}</p>\n";
-            Content.Add(desc);
-
-            var divEnd = "</div>\n";
-            Content.Add(divEnd);
-        }
-
-        private static void FormatHeader()
-        {
-            string line = string.Empty;
-
-            line = "<!DOCTYPE html>\n";
-            Content.Add(line);
-            line = "<html lang=\"en\">\n";
-            Content.Add(line);
-            line = "<head>\n";
-            Content.Add(line);
-            line = "<meta charset=\"UTF-8\">\n";
-            Content.Add(line);
-            line = "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n";
-            Content.Add(line);
-            line = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-            Content.Add(line);
-            line = "<title>Alan &amp; Jen's Itinerary</title>\n";
-            Content.Add(line);
-            line = "</head>\n";
-            Content.Add(line);
-            line = "<body>\n";
-            Content.Add(line);
-            line = "<h1 class=\"title\">David's Itinerary</h1>\n";
-            Content.Add(line);
-            line = "<div=\"container\">";
-            Content.Add(line);
+            Content.Add("<!DOCTYPE html>");
+            Content.Add("<html lang=\"en\">");
+            Content.Add("<head>");
+            Content.Add("<meta charset=\"UTF-8\">");
+            Content.Add("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+            Content.Add("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+            Content.Add($"<title>{header}</title>");
+            Content.Add("</head>");
+            Content.Add("<body>");
+            Content.Add("<div class=\"row mt-3\">");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("<div class=\"col-sm-8\">");
+            Content.Add("<div class=\"text-center mt-5\">");
+            Content.Add($"<h1 class=\"title\">{header}</h1>");
+            Content.Add("</div>");
+            Content.Add("</div>");
+            Content.Add("<div class=\"col-sm-2\"></div>");
+            Content.Add("</div>");
         }
 
         private static void FormatFooter()
         {
-            string line = string.Empty;
-            line = "</div>";
-            Content.Add(line);
-            line = "</body>\n";
-            Content.Add(line);
-            line = "</html>\n";
-            Content.Add(line);
-        }
-
-        private static void FormatDivider()
-        {
-            var line = "<div class=\"divider\"><hr/></div>\n";
-            Content.Add(line);
+            Content.Add("</body>\n</html>");
         }
     }
 }
