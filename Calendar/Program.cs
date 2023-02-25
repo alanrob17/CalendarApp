@@ -14,10 +14,13 @@ namespace Calendar
     {
         public static void Main(string[] args)
         {
+            var name = _rs.User1; // Alan
+            // var name = _rs.User2; // David
 
-            var name = _rs.User1;
-            // var name = _rs.User2;
-            
+            // Get the start and end dates of the range
+            var startDate = new DateTime(2016, 08, 14);
+            var endDate = new DateTime(2016, 11, 02);
+
             var fileName = $"{name}Calendar.json";
 
             string jsonFile = fileName;
@@ -31,10 +34,6 @@ namespace Calendar
 
             events = _ed.RemoveCancelEvents(events);
             _ed.SortEventData(events);
-            
-            // Get the start and end dates of the range
-            var startDate = new DateTime(2017, 05, 15);
-            var endDate = new DateTime(2017, 08, 01);
 
             List<ShortEventModel> list = _ed.CreateSelectedEventsList(events, startDate, endDate);
 
