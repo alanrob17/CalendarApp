@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using _rs = Calendar.Properties.Resources;
@@ -35,7 +36,7 @@ namespace Calendar.Data
 
             foreach (var item in list)
             {
-                if(item.StartDate.Month > monthStamp)
+                if (item.StartDate.Month > monthStamp)
                 {
                     monthStamp = item.StartDate.Month;
 
@@ -44,8 +45,6 @@ namespace Calendar.Data
 
                 BuildCard(item);
             }
-
-            // FormatFooter();
 
             var newFile = "Itinerary.html";
             File.WriteAllLines(Environment.CurrentDirectory + "\\" + newFile, Content, Encoding.UTF8);
@@ -72,14 +71,10 @@ namespace Calendar.Data
 
         private static void BuildCard(ShortEventModel item)
         {
-            var startDate = string.Empty; 
+            var startDate = string.Empty;
             var endDate = string.Empty;
-            
-            if (!string.IsNullOrEmpty(item.Description) && item.Description.Contains("\n"))
-            {
-                item.Description = item.Description.Replace("\n", "<br/>");
-            }
-            
+            var description = item.Description;
+
             Content.Add("<div class=\"row mt-3\">");
             Content.Add("<div class=\"col-sm-2\"></div>");
             Content.Add("<div class=\"col-sm-8\">");
@@ -88,12 +83,18 @@ namespace Calendar.Data
             Content.Add($"<h2 class=\"card-title\">{item.Name}</h2>");
 
             var formattedDate = FormatDateTime(item.StartDate);
-         
+
             Content.Add($"<h5 class=\"mt-0 mb-3\">{formattedDate}</h5>");
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                description = ReplaceNewLines(description);
+            }
+
             Content.Add("<div class=\"description\">");
-            Content.Add($"<p class=\"card-text\"><strong>Description:</strong><br/>{item.Description}</p>");
+            Content.Add($"<p class=\"card-text\"><strong>Description:</strong><br/>{description}</p>");
             Content.Add("</div>");
-            
+
 
             if (item.StartDate.Day != item.EndDate.Day && item.StartDate.AddDays(1).Day != item.EndDate.Day)
             {
@@ -108,7 +109,11 @@ namespace Calendar.Data
                 Content.Add($"<p class=\"card-text\"><strong>Date:</strong> {startDate}</p>");
             }
 
-            Content.Add($"<p class=\"card-text\"><strong>Location:</strong><br/>{item.Location}</p>");
+            var location = BuildLocation(item.Location);
+            if (!string.IsNullOrEmpty(location))
+            {
+                Content.Add($"<p class=\"card-text\"><strong>Location:</strong><br/>&nbsp;&nbsp;&nbsp;&nbsp;{location}</p>");
+            }
             Content.Add($"<p class=\"card-text\"><strong>link:</strong><br/><a href=\"{item.HtmlLink}\" target=\"_blank\">Calendar event.</a></p>");
             Content.Add("</div>");
             Content.Add("</div>");
@@ -117,9 +122,17 @@ namespace Calendar.Data
             Content.Add("</div>");
         }
 
-        private static void FormatFooter()
+        private static string BuildLocation(string location)
         {
-            Content.Add("</body>\n</html>");
+            var googleLocation = string.Empty;
+
+            if (!string.IsNullOrEmpty(location))
+            {
+                googleLocation = location.Replace(' ', '+');
+                location = $"<a href=\"https://google.com/maps?q={googleLocation}\" target=\"_blank\">{location}</a>";
+                return location;
+            }
+            return string.Empty;
         }
 
         private static string FormatDateTime(DateTime startDate)
@@ -129,6 +142,25 @@ namespace Calendar.Data
             var formattedDateTime = $"{day}{day.OrdinalSuffix()} {startDate.ToString("MMMM yyyy - h:mm tt")}";
 
             return formattedDateTime;
+        }
+
+        private static string ReplaceNewLines(string description)
+        {
+            if (description.Contains("\n"))
+            {
+                description = description.Replace("\n", "<br/>");
+            }
+
+            return description;
+        }
+
+        // not being used.
+        private static string CreateHrefs(string description)
+        {
+            Regex urlRegex = new Regex(@"(https?://)(\S+)");
+            description = urlRegex.Replace(description, "<a href=\"$1$2\" target=\"_blank\">" + urlRegex.Replace("$2", "", 1) + "</a>");
+
+            return description;
         }
     }
 }
