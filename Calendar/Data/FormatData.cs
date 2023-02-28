@@ -101,7 +101,7 @@ namespace Calendar.Data
                 startDate = FormatDateTime(item.StartDate);
                 Content.Add($"<p class=\"card-text\"><strong>Start date:</strong> {startDate}</p>");
                 endDate = FormatDateTime(item.EndDate);
-                Content.Add($"<p class=\"card-text\"><strong>End date:</strong> {endDate}</p>");
+                Content.Add($"<p class=\"card-text\"><strong>&nbsp;&nbsp;End date:</strong> {endDate}</p>");
             }
             else
             {
