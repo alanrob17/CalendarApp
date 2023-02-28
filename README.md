@@ -2,7 +2,7 @@
 
 This application takes the content from a Google Calendar in JSON format and reformats it into a web page.
 
-It works on a start and end date and can create a historical or current web page. I am using it to record trips to Europe that I recorded in my Calender.
+It works on a start and end date and can create a historical or current web page. I am using it to record trips to Europe that I added into my Calender.
 
 **Note:** I haven't been able to programmatically capture the event data. I am going to ``developer.google.com`` to run queries and grab my complete Calendar event data.
 
