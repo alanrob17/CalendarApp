@@ -88,6 +88,16 @@ namespace Calendar.Data
 
             if (!string.IsNullOrEmpty(description))
             {
+                if (description.Contains("Arrival:"))
+                {
+                    description = description.Replace("Arrival:", "<strong>Arrival:</strong>");
+                }
+
+                if (description.Contains("Departure:"))
+                {
+                    description = description.Replace("Departure:", "<strong>Departure:</strong>");
+                }
+
                 description = ReplaceNewLines(description);
             }
 
@@ -95,6 +105,9 @@ namespace Calendar.Data
             Content.Add($"<p class=\"card-text\"><strong>Description:</strong><br/>{description}</p>");
             Content.Add("</div>");
 
+            if (!string.IsNullOrEmpty(description))
+            {
+            }
 
             if (item.StartDate.Day != item.EndDate.Day && item.StartDate.AddDays(1).Day != item.EndDate.Day)
             {
@@ -105,8 +118,9 @@ namespace Calendar.Data
             }
             else
             {
-                startDate = FormatDateTime(item.StartDate);
-                Content.Add($"<p class=\"card-text\"><strong>Date:</strong> {startDate}</p>");
+                //// I don't want to show this date
+                //startDate = FormatDateTime(item.StartDate);
+                //Content.Add($"<p class=\"card-text\"><strong>Date:</strong> {startDate}</p>");
             }
 
             var location = BuildLocation(item.Location);

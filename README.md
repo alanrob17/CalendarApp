@@ -8,9 +8,9 @@ It works on a start and end date and can create a historical or current web page
 
 ## Getting the Calendar event data
 
-Got to the web page.
+**Go to the web page.**
 
-[Google developers website](https://developers.google.com/calendar/api/v3/reference/events/list).
+**Link:** [Google developers website](https://developers.google.com/calendar/api/v3/reference/events/list).
 
 ### Inputs
 
