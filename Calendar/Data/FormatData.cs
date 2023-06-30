@@ -74,7 +74,7 @@ namespace Calendar.Data
             var startDate = string.Empty;
             var endDate = string.Empty;
             var description = item.Description;
-
+            
             Content.Add("<div class=\"row mt-3\">");
             Content.Add("<div class=\"col-sm-2\"></div>");
             Content.Add("<div class=\"col-sm-8\">");
@@ -83,6 +83,8 @@ namespace Calendar.Data
             Content.Add($"<h2 class=\"card-title\">{item.Name}</h2>");
 
             var formattedDate = FormatDateTime(item.StartDate);
+
+            formattedDate = ReplaceAmTime(formattedDate);
 
             Content.Add($"<h5 class=\"mt-0 mb-3\">{formattedDate}</h5>");
 
@@ -112,8 +114,12 @@ namespace Calendar.Data
             if (item.StartDate.Day != item.EndDate.Day && item.StartDate.AddDays(1).Day != item.EndDate.Day)
             {
                 startDate = FormatDateTime(item.StartDate);
+                startDate = ReplaceAmTime(startDate);
+
                 Content.Add($"<p class=\"card-text\"><strong>Start date:</strong> {startDate}</p>");
                 endDate = FormatDateTime(item.EndDate);
+                endDate = ReplaceAmTime(endDate);
+
                 Content.Add($"<p class=\"card-text\"><strong>&nbsp;&nbsp;End date:</strong> {endDate}</p>");
             }
             else
@@ -134,6 +140,18 @@ namespace Calendar.Data
             Content.Add("</div>");
             Content.Add("<div class=\"col-sm-2\"></div>");
             Content.Add("</div>");
+        }
+
+        private static string ReplaceAmTime(string date)
+        {
+            var time = " - 12:00 AM";
+
+            if (date.Contains(time))
+            {
+                date = date.Replace(time, string.Empty);
+            }
+
+            return date;
         }
 
         private static string BuildLocation(string location)

@@ -70,7 +70,7 @@ namespace Calendar.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to David&amp;amp;&apos;s Itinerary 2023.
+        ///   Looks up a localized string similar to David&apos;s Itinerary 2023.
         /// </summary>
         internal static string DavidHeader {
             get {
